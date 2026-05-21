@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rogue – Dungeons of Doom</title>
+<style>
+/* ================================================================
+   Rogue – Dungeons of Doom  |  AWS Web Edition
+   Dark terminal aesthetic with amber accents
+   ================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #080810;
+  --bg2:       #0e0e1c;
+  --bg3:       #13132a;
+  --border:    #2a2a4a;
+  --gold:      #ffd700;
+  --gold-dim:  #9a8300;
+  --fg:        #c8d8ff;
+  --fg-dim:    #7080aa;
+  --good:      #50dc50;
+  --warn:      #ffc800;
+  --bad:       #dc5050;
+  --cyan:      #50dcd2;
+  --font:      "Courier New", Courier, monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 10px 6px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Title ────────────────────────────────────────────────────── */
+.title {
+  font-size: 1.05rem;
+  color: var(--gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  text-shadow: 0 0 14px #ffd70055;
+}
+
+/* ── Game wrapper ─────────────────────────────────────────────── */
+#game-wrap {
+  position: relative;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  box-shadow: 0 0 40px #0009, 0 0 80px #ffd70010;
+  background: #0a0a14;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* ── Connecting overlay ───────────────────────────────────────── */
+#overlay {
+  position: absolute; inset: 0;
+  background: #080810ee;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px;
+  font-size: 1.1rem;
+  color: var(--gold);
+  border-radius: 4px;
+  transition: opacity 0.3s;
+}
+#overlay.hidden { display: none; }
+#overlay .spinner {
+  width: 36px; height: 36px;
+  border: 3px solid #ffd70022;
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Status bar ───────────────────────────────────────────────── */
+#status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 10px;
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+  font-size: 0.72rem;
+  color: var(--fg-dim);
+  border-radius: 0 0 4px 4px;
+}
+#status-bar .stat { white-space: nowrap; }
+.good  { color: var(--good) !important; }
+.warn  { color: var(--warn) !important; }
+.bad   { color: var(--bad)  !important; }
+
+/* ── Hint line ───────────────────────────────────────────────── */
+#hint {
+  font-size: 0.65rem;
+  color: var(--fg-dim);
+  margin-top: 5px;
+  letter-spacing: 0.5px;
+}
+
+/* ── Touch d-pad ─────────────────────────────────────────────── */
+#touch-controls {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+}
+.touch-row { display: flex; gap: 4px; }
+.touch-btn {
+  width: 46px; height: 46px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--fg);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.08s;
+}
+.touch-btn:active { background: #2a2a5a; }
+.touch-btn.wide   { width: 96px; font-size: 0.75rem; }
+@media (hover: none) and (pointer: coarse) {
+  #touch-controls { display: flex; }
+}
+</style>
+</head>
+<body>
+
+<div class="title">⚔ Rogue – Dungeons of Doom ⚔</div>
+
+<div id="game-wrap">
+  <canvas id="canvas"></canvas>
+
+  <div id="status-bar">
+    <span class="stat" id="sb-hp">HP: --</span>
+    <span class="stat" id="sb-str">Str: --</span>
+    <span class="stat" id="sb-ac">AC: --</span>
+    <span class="stat" id="sb-lvl">Lvl: --</span>
+    <span class="stat" id="sb-exp">Exp: --</span>
+    <span class="stat" id="sb-gold">Gold: --</span>
+    <span class="stat" id="sb-depth">Depth: --</span>
+    <span class="stat" id="sb-hunger" style="color:var(--warn)"></span>
+    <span class="stat" id="sb-flags"></span>
+  </div>
+
+  <div id="overlay">
+    <div class="spinner"></div>
+    <div id="overlay-msg">Connecting to Rogue server…</div>
+  </div>
+</div>
+
+<div id="hint">
+  Arrow keys / hjklyubn · Shift+dir = run · , pick up · d drop · i inv ·
+  q quaff · r read · e eat · w wield · W wear · T take off · s search · > stairs · ? help · Q quit
+</div>
+
+<!-- Touch d-pad (shown only on touch devices) -->
+<div id="touch-controls">
+  <div class="touch-row">
+    <button class="touch-btn" data-key="y">↖</button>
+    <button class="touch-btn" data-key="k">↑</button>
+    <button class="touch-btn" data-key="u">↗</button>
+  </div>
+  <div class="touch-row">
+    <button class="touch-btn" data-key="h">←</button>
+    <button class="touch-btn" data-key=".">·</button>
+    <button class="touch-btn" data-key="l">→</button>
+  </div>
+  <div class="touch-row">
+    <button class="touch-btn" data-key="b">↙</button>
+    <button class="touch-btn" data-key="j">↓</button>
+    <button class="touch-btn" data-key="n">↘</button>
+  </div>
+  <div class="touch-row" style="margin-top:6px">
+    <button class="touch-btn wide" data-key=",">Pick up</button>
+    <button class="touch-btn wide" data-key="i">Inv</button>
+    <button class="touch-btn wide" data-key=">">Stairs</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ══════════════════════════════════════════════════════════════════
+//  Rogue AWS – Frontend JavaScript
+//  Talks to the Spring Boot backend via /api/* endpoints.
+//  The BASE URL is empty (same origin) so it works on localhost
+//  AND on AWS (the browser always calls the server it came from).
+// ══════════════════════════════════════════════════════════════════
+
+const BASE   = '';          // same-origin – works locally AND on AWS
+const COLS   = 80;
+const ROWS   = 24;
+const CW     = 11;          // cell width  px
+const CH     = 18;          // cell height px
+const MSG_H  = 22;          // message bar height px
+
+const canvas     = document.getElementById('canvas');
+const ctx        = canvas.getContext('2d');
+const overlay    = document.getElementById('overlay');
+const overlayMsg = document.getElementById('overlay-msg');
+
+canvas.width  = COLS * CW;
+canvas.height = MSG_H + ROWS * CH;
+document.getElementById('game-wrap').style.width = canvas.width + 'px';
+
+// ── Colour palette ─────────────────────────────────────────────
+const C = {
+  bg:         '#0a0a14',
+  wall:       '#64648c',
+  floor:      '#37374f',
+  passage:    '#3c463c',
+  door:       '#a07840',
+  stairs:     '#c8c864',
+  player:     '#ffff64',
+  gold:       '#ffd700',
+  potion:     '#64b4ff',
+  scroll:     '#e6e6b4',
+  food:       '#c89664',
+  weapon:     '#c8c8dc',
+  armor:      '#96c896',
+  ring:       '#ff64c8',
+  stick:      '#b48250',
+  amulet:     '#c864ff',
+  trap:       '#b43232',
+  monster:    '#dc5050',
+  monsterAlt: '#ff8c00',
+  msgBg:      '#0e0e1e',
+  msgFg:      '#ffffff',
+  popupBg:    'rgba(0,0,0,0.90)',
+  popupBdr:   '#3a3a6a',
+  popupTitle: '#ffff64',
+  popupFg:    '#dcdcdc',
+  popupDim:   '#888',
+};
+
+function tileColor(ch) {
+  switch (ch) {
+    case '-': case '|': return C.wall;
+    case '.':  return C.floor;
+    case '#':  return C.passage;
+    case '+':  return C.door;
+    case '%':  return C.stairs;
+    case '^':  return C.trap;
+    case '*':  return C.gold;
+    case '!':  return C.potion;
+    case '?':  return C.scroll;
+    case ':':  return C.food;
+    case ')':  return C.weapon;
+    case ']':  return C.armor;
+    case '=':  return C.ring;
+    case '/':  return C.stick;
+    case ',':  return C.amulet;
+    case '@':  return C.player;
+    default:
+      if (ch >= 'A' && ch <= 'Z')
+        return ch.charCodeAt(0) % 2 === 0 ? C.monster : C.monsterAlt;
+      return '#aaa';
+  }
+}
+
+// ── State ─────────────────────────────────────────────────────
+let state     = null;
+let busy      = false;
+let connected = false;
+
+// ── Rendering ─────────────────────────────────────────────────
+const FONT    = `bold ${CH - 2}px "Courier New", monospace`;
+const FONT_SM = `${CH - 6}px "Courier New", monospace`;
+
+function render(st) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Message bar
+  ctx.fillStyle = C.msgBg;
+  ctx.fillRect(0, 0, canvas.width, MSG_H);
+  if (st.message) {
+    ctx.font      = FONT_SM;
+    ctx.fillStyle = C.msgFg;
+    ctx.fillText(st.message, 6, MSG_H - 5);
+  }
+
+  // Map tiles
+  ctx.font = FONT;
+  const mapTop = MSG_H;
+  for (let y = 0; y < ROWS; y++) {
+    const row = (st.map && st.map[y]) ? st.map[y] : '';
+    for (let x = 0; x < COLS; x++) {
+      const ch = row[x] || ' ';
+      if (ch === ' ') continue;
+      const px  = x * CW;
+      const py  = mapTop + y * CH;
+      const col = tileColor(ch);
+      if (ch === '@') {
+        ctx.fillStyle = 'rgba(255,255,100,0.13)';
+        ctx.fillRect(px, py, CW, CH);
+      }
+      ctx.fillStyle = col;
+      ctx.fillText(ch, px + 1, py + CH - 3);
+    }
+  }
+
+  // End-game overlay
+  if (st.dead || st.won) { renderEndScreen(st); return; }
+
+  // Popup overlay
+  if (st.popupLines && st.popupLines.length > 0) renderPopup(st);
+
+  // Status bar (HTML elements)
+  updateStatusBar(st);
+}
+
+function renderPopup(st) {
+  const lines = st.popupLines;
+  const title = st.showingHelp       ? '── Help ──'
+              : st.showingDiscovered ? '── Discoveries ──'
+              :                        '── Inventory ──';
+
+  ctx.font = FONT_SM;
+  const lineH = CH - 2;
+  const maxW  = Math.min(canvas.width  - 40, 580);
+  const maxH  = Math.min(canvas.height - 60, 390);
+  const px    = (canvas.width  - maxW) / 2;
+  const py    = (canvas.height - maxH) / 2;
+
+  // Background
+  ctx.fillStyle = C.popupBg;
+  ctx.beginPath();
+  ctx.roundRect(px, py, maxW, maxH, 8);
+  ctx.fill();
+  ctx.strokeStyle = C.popupBdr;
+  ctx.lineWidth   = 1.5;
+  ctx.stroke();
+
+  // Title
+  ctx.fillStyle = C.popupTitle;
+  ctx.font      = `bold ${CH - 4}px "Courier New", monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText(title, px + maxW / 2, py + 20);
+  ctx.textAlign = 'left';
+
+  ctx.font = FONT_SM;
+  const maxLines = Math.floor((maxH - 50) / lineH);
+  const start    = Math.max(0, lines.length - maxLines);
+  let cy = py + 36;
+  for (let i = start; i < lines.length && cy < py + maxH - 18; i++) {
+    const line = lines[i];
+    if (line.length > 2 && line[1] === ')') ctx.fillStyle = '#b4d2ff';
+    else if (line.startsWith('  '))         ctx.fillStyle = C.popupDim;
+    else                                    ctx.fillStyle = C.popupFg;
+    ctx.fillText(line, px + 12, cy);
+    cy += lineH;
+  }
+
+  // Footer
+  ctx.fillStyle = C.popupDim;
+  ctx.font = `${CH - 7}px "Courier New", monospace`;
+  ctx.fillText('SPACE / ESC to close', px + 12, py + maxH - 6);
+}
+
+function renderEndScreen(st) {
+  ctx.fillStyle = 'rgba(0,0,0,0.84)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const cx = canvas.width / 2;
+  let   cy = canvas.height / 2;
+
+  if (st.won) {
+    const lines = [
+      '*** YOU WIN! ***', '',
+      'You escaped the Dungeons of Doom',
+      'with the Amulet of Yendor!',
+      '',
+      `Gold: ${st.player.gold}`,
+      `Exp:  ${st.player.exp}`,
+      '',
+      'Press R to play again',
+    ];
+    cy -= (lines.length * 24) / 2;
+    ctx.textAlign = 'center';
+    lines.forEach((l, i) => {
+      ctx.font      = i === 0 ? 'bold 26px "Courier New"' : '17px "Courier New"';
+      ctx.fillStyle = i === 0 ? C.gold : '#c8d8ff';
+      ctx.fillText(l, cx, cy + i * 26);
+    });
+    ctx.textAlign = 'left';
+  } else {
+    const tomb = [
+      '+---------+', '|         |', '| R.I.P.  |', '|         |',
+      `| ${pc('Lvl '+(st.player.lvl||1), 7)} |`,
+      `| ${pc('Gold:'+(st.player.gold||0), 7)} |`,
+      '|         |',
+      `| ${pc('Killed by', 7)} |`,
+      `| ${pc(shorten(st.deathMsg||'', 7), 7)} |`,
+      '+---------+',
+    ];
+    cy -= (tomb.length * 22) / 2;
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 18px "Courier New"';
+    ctx.fillStyle = '#a0a0b4';
+    tomb.forEach((l, i) => ctx.fillText(l, cx, cy + i * 22));
+    ctx.font      = '14px "Courier New"';
+    ctx.fillStyle = '#b4d2ff';
+    ctx.fillText('Press R to play again', cx, cy + tomb.length * 22 + 18);
+    ctx.textAlign = 'left';
+  }
+}
+
+function pc(s, w) {
+  if (s.length >= w) return s.substring(0, w);
+  const pad = Math.floor((w - s.length) / 2);
+  return ' '.repeat(pad) + s + ' '.repeat(w - s.length - pad);
+}
+function shorten(s, w) {
+  return !s ? '' : s.length <= w ? s : s.substring(s.length - w);
+}
+
+const HUNGER_LABEL = ['', 'Hungry', 'Weak', 'Fainting!'];
+
+function updateStatusBar(st) {
+  const p = st.player || {};
+  const ratio = p.hp / Math.max(1, p.maxHp);
+  const hpCls = ratio > 0.5 ? 'good' : ratio > 0.25 ? 'warn' : 'bad';
+
+  document.getElementById('sb-hp').innerHTML =
+    `<span class="${hpCls}">HP: ${p.hp}/${p.maxHp}</span>`;
+  document.getElementById('sb-str').textContent   = `Str: ${p.str}/${p.maxStr}`;
+  document.getElementById('sb-ac').textContent    = `AC: ${p.ac}`;
+  document.getElementById('sb-lvl').textContent   = `Lvl: ${p.lvl}`;
+  document.getElementById('sb-exp').textContent   = `Exp: ${p.exp}`;
+  document.getElementById('sb-gold').textContent  = `Gold: ${p.gold}`;
+  document.getElementById('sb-depth').textContent = `Depth: ${st.level}`;
+
+  const hunger = document.getElementById('sb-hunger');
+  hunger.textContent = HUNGER_LABEL[p.hunger] || '';
+
+  const flags = [];
+  if (p.blind)   flags.push('<span class="bad">Blind</span>');
+  if (p.confused)flags.push('<span class="warn">Confused</span>');
+  if (p.haste)   flags.push('<span class="good">Haste</span>');
+  if (p.levit)   flags.push('<span class="good">Levit</span>');
+  document.getElementById('sb-flags').innerHTML = flags.join(' ');
+}
+
+// ── Network ────────────────────────────────────────────────────
+async function fetchState() {
+  try {
+    const res = await fetch(`${BASE}/api/state`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    state = await res.json();
+    if (!connected) { connected = true; overlay.classList.add('hidden'); }
+    render(state);
+  } catch (e) {
+    if (connected) {
+      connected = false;
+      overlayMsg.textContent = 'Connection lost. Is the server still running?';
+      overlay.classList.remove('hidden');
+    }
+  }
+}
+
+async function sendKey(key) {
+  if (busy) return;
+  busy = true;
+  try {
+    const res = await fetch(`${BASE}/api/key`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: key,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    state = await res.json();
+    render(state);
+  } catch (e) {
+    console.warn('sendKey error:', e);
+  } finally {
+    busy = false;
+  }
+}
+
+// ── Input ──────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const handled = [
+    'ArrowLeft','ArrowRight','ArrowUp','ArrowDown',
+    ' ', 'Enter', 'Escape',
+    'h','H','j','J','k','K','l','L',
+    'y','Y','u','U','b','B','n','N',
+  ];
+  if (handled.includes(e.key) || e.key.length === 1) e.preventDefault();
+  sendKey(e.key);
+});
+
+document.querySelectorAll('.touch-btn').forEach(btn =>
+  btn.addEventListener('click', () => sendKey(btn.dataset.key))
+);
+
+// ── Auto-poll: recover if server restarts ──────────────────────
+setInterval(fetchState, 2000);
+
+// Initial fetch
+fetchState();
+</script>
+</body>
+</html>
