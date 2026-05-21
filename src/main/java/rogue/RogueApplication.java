@@ -20,6 +20,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RogueApplication {
 
     public static void main(String[] args) {
+
+        System.out.println("Starting RogueApplication...");
+
         SpringApplication.run(RogueApplication.class, args);
     }
 }

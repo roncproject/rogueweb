@@ -27,6 +27,10 @@ public class RogueController {
     private final GameSession session;
 
     public RogueController(GameSession session) {
+
+
+        System.out.println("Creating new RogueController for session ");
+
         this.session = session;
     }
 

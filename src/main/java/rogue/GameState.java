@@ -283,6 +283,8 @@ public class GameState {
         player.armor        = startArmor;
         player.stats.arm    = GameData.ARMOR_CLASS[GameData.RING_MAIL];
         player.foodLeft     = 2000;
+
+        System.out.println("Initialized player with starting equipment and stats.");
     }
 
     /**

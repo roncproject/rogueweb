@@ -25,6 +25,8 @@ public class LevelGenerator {
      * @param gs the game state to populate when generating a level
      */
     public LevelGenerator(GameState gs) {
+        System.out.println("LevelGenerator initialized with GameState: " + gs);
+
         this.gs = gs;
     }
 
@@ -34,6 +36,8 @@ public class LevelGenerator {
      * and monsters. Finally positions the player in the first available room.
      */
     public void generateLevel() {
+        System.out.println("Generating level " + gs.level);
+        
         // Clear all map data from the previous level
         for (int y = 0; y < GameData.NUMLINES; y++) {
             for (int x = 0; x < GameData.NUMCOLS; x++) {

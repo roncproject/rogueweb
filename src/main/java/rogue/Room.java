@@ -41,6 +41,9 @@ class Room {
      * @param size the total width and height of the room (including walls)
      */
     Room(Coord pos, Coord size) {
+
+        System.out.println("Creating new Room at " + pos + " with size " + size);
+
         this.pos = pos;
         this.size = size;
     }

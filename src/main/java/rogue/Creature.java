@@ -111,6 +111,9 @@ class Creature {
      * @param p the initial map position
      */
     Creature(char t, Coord p) {
+        
+        System.out.println("Creating creature of type '" + t + "' at " + p);
+
         type = t;
         disguise = t;
         pos = p;
