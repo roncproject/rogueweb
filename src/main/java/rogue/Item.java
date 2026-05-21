@@ -8,7 +8,7 @@ package rogue;
  * The {@code type} field identifies the broad category (e.g., {@link GameData#O_POTION}),
  * while {@code which} identifies the specific sub-type within that category.
  */
-class Item {
+class Item extends Thing {
     /**
      * The broad item category. One of the O_* constants in {@link GameData}
      * (e.g., O_POTION, O_SCROLL, O_WEAPON, etc.).
@@ -22,7 +22,7 @@ class Item {
     int which;
 
     /** The position of this item on the dungeon map (null when in a pack). */
-    Coord pos;
+    //Coord pos;
 
     /**
      * The inventory letter assigned to this item when it is in the player's pack

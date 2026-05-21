@@ -11,9 +11,9 @@ import java.util.List;
  * For the player, additional fields track equipped items, gold, hunger, and other
  * player-specific state that monsters don't need.
  */
-class Creature {
+class Creature extends Thing {
     /** Current map position of this creature. */
-    Coord pos;
+    // Coord pos;
 
     /**
      * The creature's type character.

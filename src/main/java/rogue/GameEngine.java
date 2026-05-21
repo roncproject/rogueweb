@@ -56,6 +56,8 @@ public class GameEngine {
         int nx = gs.player.pos.x + dx;
         int ny = gs.player.pos.y + dy;
 
+        System.out.println("Attempting to move player to (" + nx + ", " + ny + ")");
+
         // Boundary check
         if (nx <= 0 || nx >= GameData.NUMCOLS - 1 || ny <= 0 || ny >= GameData.NUMLINES - 1)
             return true;
@@ -109,6 +111,11 @@ public class GameEngine {
      * @param gold the gold item to pick up
      */
     private void pickupGold(Item gold) {
+
+        System.out.println("Picking up gold at " + gold.pos + " worth " + gold.goldVal + " pieces.");
+
+
+
         gs.player.purse += gold.goldVal;
         gs.floorItems.remove(gold);
         gs.itemAt[gold.pos.y][gold.pos.x] = null;
@@ -186,6 +193,7 @@ public class GameEngine {
      * @return false if the player died from a counter-effect, true otherwise
      */
     private boolean attackMonster(Creature m) {
+        System.out.println("Attacking monster: " + monName(m)); 
         int monAC  = m.stats.arm;
         int bonus  = gs.player.stats.lvl;
         int hitRoll = rng.nextInt(20) + 1 + bonus;
@@ -249,6 +257,9 @@ public class GameEngine {
      */
     private void killMonster(Creature m) {
         String name = monName(m);
+
+        System.out.println("Killing monster: " + name); 
+        
         gs.msg("You defeated the " + name + "! (+" + m.stats.exp + "xp)");
         String lvlUp = gs.addExp(m.stats.exp);
         if (lvlUp != null) gs.addMsg(lvlUp);
