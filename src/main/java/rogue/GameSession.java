@@ -32,7 +32,10 @@ public class GameSession {
         state  = new GameState();
         engine = new GameEngine(state);
         LevelGenerator lg = new LevelGenerator(state);
-        lg.generateLevel();
+        lg.level.generate();
+        
+        
+        //generateLevel();
         state.msg("Welcome to Rogue! Press ? for help.");
     }
 

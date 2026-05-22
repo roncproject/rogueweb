@@ -30,6 +30,10 @@ class Coord {
         return new Coord(x, y);
     }
 
+    Coord add(int dx, int dy) {
+        return new Coord(x + dx, y + dy);
+    }
+
     /**
      * Checks whether this coordinate is equal to another coordinate.
      *

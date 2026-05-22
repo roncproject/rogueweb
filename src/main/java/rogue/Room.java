@@ -9,9 +9,9 @@ import java.util.List;
  * A room may be "gone" (replaced by a passage point), dark (limiting visibility),
  * or a maze room. Each room can optionally hold gold and has a list of exit coordinates.
  */
-class Room {
+class Room extends Thing {
     /** The upper-left corner of this room on the map. */
-    Coord pos;
+    // Coord pos;
 
     /** The width (x) and height (y) of this room in tiles, including walls. */
     Coord size;

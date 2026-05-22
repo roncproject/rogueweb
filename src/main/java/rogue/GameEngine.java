@@ -56,6 +56,8 @@ public class GameEngine {
         int nx = gs.player.pos.x + dx;
         int ny = gs.player.pos.y + dy;
 
+        //gs.player.move(dx, dy);
+
         System.out.println("Attempting to move player to (" + nx + ", " + ny + ")");
 
         // Boundary check
@@ -81,7 +83,7 @@ public class GameEngine {
         gs.monsterAt[ny][nx] = null; // player occupies this cell
 
         // Update field of view
-        lg.revealRoom(gs.player.pos);
+        lg.level.revealRoom(gs.player.pos);
 
         // Report items on the ground
         Item item = gs.itemAt[ny][nx];
@@ -281,7 +283,9 @@ public class GameEngine {
      * @param m the monster that dropped the loot
      */
     private void dropMonsterLoot(Creature m) {
-        Item drop = lg.generateItem();
+        //Item drop = lg.generateItem();
+        Item drop = lg.level.generateItem();
+
         if (drop == null) return;
         drop.pos = m.pos.copy();
         if (gs.itemAt[m.pos.y][m.pos.x] == null) {
@@ -845,7 +849,7 @@ public class GameEngine {
     private void descend() {
         gs.level++;
         gs.maxLevel = Math.max(gs.maxLevel, gs.level);
-        lg.generateLevel();
+        lg.level.generate();
         gs.msg("You descend to dungeon level " + gs.level + ".");
     }
 
@@ -886,7 +890,7 @@ public class GameEngine {
             if (gs.isWalkable(nx, ny) && gs.monsterAt[ny][nx] == null) {
                 gs.player.pos.x = nx;
                 gs.player.pos.y = ny;
-                lg.revealRoom(gs.player.pos);
+                lg.level.revealRoom(null);
                 return;
             }
         }

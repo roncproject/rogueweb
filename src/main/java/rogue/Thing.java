@@ -4,4 +4,9 @@ class Thing {
 
      Coord pos;
 
+     Thing() {
+          
+     }
+
+
 }

@@ -11,7 +11,24 @@ import java.util.List;
  * For the player, additional fields track equipped items, gold, hunger, and other
  * player-specific state that monsters don't need.
  */
-class Creature extends Thing {
+class Creature extends Thing implements Movable{
+
+    public void move (Coord newPos) {
+        // Implementation of movement logic goes here
+
+        System.out.println("Moving creature of type '" + type + "' from " + pos + " to " + newPos); 
+
+        pos = newPos;
+    } 
+
+    public void move(int dx, int dy) {
+        // Implementation of movement logic goes here
+        System.out.println("Moving creature of type '" + type + "' from " + pos + " by delta (" + dx + "," + dy + ") to " + pos.add(dx, dy));
+        
+        move(pos.add(dx, dy));  
+    }   
+
+
     /** Current map position of this creature. */
     // Coord pos;
 
@@ -146,4 +163,6 @@ class Creature extends Thing {
     void clearFlag(int f) {
         flags &= ~f;
     }
+
+
 }

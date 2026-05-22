@@ -8,7 +8,17 @@ package rogue;
  * The {@code type} field identifies the broad category (e.g., {@link GameData#O_POTION}),
  * while {@code which} identifies the specific sub-type within that category.
  */
-class Item extends Thing {
+class Item extends Thing implements Movable {
+
+    public void move(Coord newPos) {
+        // Implementation of movement logic goes here
+    }
+
+    public void move(int dx, int dy) {
+        // Implementation of movement logic goes here
+    }
+    
+
     /**
      * The broad item category. One of the O_* constants in {@link GameData}
      * (e.g., O_POTION, O_SCROLL, O_WEAPON, etc.).
