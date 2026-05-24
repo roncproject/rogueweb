@@ -13,6 +13,77 @@ import java.util.List;
  */
 class Creature extends Thing implements Movable{
 
+    public Creature() {
+        // Default constructor
+    }   
+
+
+       /**
+     * Constructs a new Creature of the given type at the given map position.
+     * The disguise is initialized to match the type character.
+     *
+     * @param t the type character ('A'-'Z' for monsters, '@' for player)
+     * @param p the initial map position
+     */
+    Creature(char t, Coord p) {
+        
+        System.out.println("Creating creature of type '" + t + "' at " + p);
+
+        type = t;
+        disguise = t;
+        pos = p;
+    }
+
+
+    /**
+     * Creates the player creature with starting stats and equips them with
+     * a +1/+1 mace (identified), ring mail armor, and one food ration.
+     */
+    //private void initPlayer() {
+     public Creature(boolean isplayer, char t, Coord p) {
+        //player = new Creature('@', new Coord(0, 0));
+        this.isPlayer = isplayer;
+        this.stats.str    = 16;
+        this.stats.maxStr = 16;
+        this.stats.lvl    = 1;
+        this.stats.exp    = 0;
+        this.stats.arm    = 10; // no armor = AC 10
+        this.stats.hpt    = 12;
+        this.stats.maxHp  = 12;
+        this.stats.dmg    = "1x4";
+
+        // Starting armor: ring mail (unenchanted)
+        Item startArmor = new Item(GameData.O_ARMOR, GameData.RING_MAIL);
+        startArmor.arm    = 0;
+        startArmor.packCh = 'b';
+
+        // Starting weapon: +1/+1 mace (already identified)
+        Item startWeapon = new Item(GameData.O_WEAPON, GameData.MACE);
+        startWeapon.hplus  = 1;
+        startWeapon.dplus  = 1;
+        startWeapon.packCh = 'a';
+        startWeapon.flags |= GameData.ISKNOW;
+
+        // Starting food: one food ration
+        Item startFood = new Item(GameData.O_FOOD, 0);
+        startFood.count   = 1;
+        startFood.packCh  = 'c';
+
+        this.pack.add(startWeapon);
+        this.pack.add(startArmor);
+        this.pack.add(startFood);
+        this.weapon       = startWeapon;
+        this.armor        = startArmor;
+        this.stats.arm    = GameData.ARMOR_CLASS[GameData.RING_MAIL];
+        this.foodLeft     = 2000;
+
+        System.out.println("Initialized player with starting equipment and stats.");
+    }
+
+
+
+
+
     public void move (Coord newPos) {
         // Implementation of movement logic goes here
 
@@ -120,21 +191,7 @@ class Creature extends Thing implements Movable{
     /** The last movement direction key pressed by the player (used for run-mode). */
     char lastDir = 0;
 
-    /**
-     * Constructs a new Creature of the given type at the given map position.
-     * The disguise is initialized to match the type character.
-     *
-     * @param t the type character ('A'-'Z' for monsters, '@' for player)
-     * @param p the initial map position
-     */
-    Creature(char t, Coord p) {
-        
-        System.out.println("Creating creature of type '" + t + "' at " + p);
-
-        type = t;
-        disguise = t;
-        pos = p;
-    }
+ 
 
     /**
      * Returns true if all bits in the given flag mask are set in this creature's flags field.
@@ -163,6 +220,52 @@ class Creature extends Thing implements Movable{
     void clearFlag(int f) {
         flags &= ~f;
     }
+
+
+    class Stats {
+    /**
+     * Current strength score.
+     * Affects hit probability and damage dealt in melee combat.
+     */
+        int str;
+
+    /**
+     * Maximum (restored) strength score.
+     * Strength can be temporarily drained but never regenerates above this value.
+     */
+        int maxStr;
+
+    /** Total experience points accumulated (used for the player's level-up tracking). */
+        int exp;
+
+    /**
+     * Character level (1-based).
+     * Higher levels grant better hit bonuses and more hit points.
+     */
+        int lvl;
+
+    /**
+     * Armor class value.
+     * Lower values mean better protection (classic Rogue convention).
+     * Unarmored player defaults to AC 10.
+     */
+        int arm;
+
+    /** Current hit points. Reaching 0 or below is lethal. */
+        int hpt;
+
+    /** Maximum hit points that can be currently held. */
+        int maxHp;
+
+    /**
+     * Damage dice string in "NxM/NxM/..." format.
+     * Each "NxM" segment means roll N dice of M sides.
+     * Multiple segments separated by "/" represent multiple attacks.
+     * Defaults to "1x4" (one four-sided die per hit).
+     */
+        String dmg = "1x4";
+    }
+
 
 
 }

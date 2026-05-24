@@ -248,43 +248,10 @@ public class GameState {
      * a +1/+1 mace (identified), ring mail armor, and one food ration.
      */
     private void initPlayer() {
-        player = new Creature('@', new Coord(0, 0));
-        player.isPlayer = true;
-        player.stats.str    = 16;
-        player.stats.maxStr = 16;
-        player.stats.lvl    = 1;
-        player.stats.exp    = 0;
-        player.stats.arm    = 10; // no armor = AC 10
-        player.stats.hpt    = 12;
-        player.stats.maxHp  = 12;
-        player.stats.dmg    = "1x4";
-
-        // Starting armor: ring mail (unenchanted)
-        Item startArmor = new Item(GameData.O_ARMOR, GameData.RING_MAIL);
-        startArmor.arm    = 0;
-        startArmor.packCh = 'b';
-
-        // Starting weapon: +1/+1 mace (already identified)
-        Item startWeapon = new Item(GameData.O_WEAPON, GameData.MACE);
-        startWeapon.hplus  = 1;
-        startWeapon.dplus  = 1;
-        startWeapon.packCh = 'a';
-        startWeapon.flags |= GameData.ISKNOW;
-
-        // Starting food: one food ration
-        Item startFood = new Item(GameData.O_FOOD, 0);
-        startFood.count   = 1;
-        startFood.packCh  = 'c';
-
-        player.pack.add(startWeapon);
-        player.pack.add(startArmor);
-        player.pack.add(startFood);
-        player.weapon       = startWeapon;
-        player.armor        = startArmor;
-        player.stats.arm    = GameData.ARMOR_CLASS[GameData.RING_MAIL];
-        player.foodLeft     = 2000;
-
+        player = new Creature(true, '@', new Coord(0, 0));
+  
         System.out.println("Initialized player with starting equipment and stats.");
+        
     }
 
     /**
