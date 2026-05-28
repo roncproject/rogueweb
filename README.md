@@ -23,3 +23,11 @@ How to run locally:
 - - Start a webbrowser pointed at http://localhost:8080 : start "" /b cmd /c "timeout /t 3 >nul && start http://localhost:8080"
 - - Start app with: java -jar target\rogue-aws.jar
  
+How to run on AWS: 
+ - I have an account at AWS, and got it working on the Elastic Beanstalk, following the instructions in AWS_GUIDE with various LLM's assisting
+
+ ISSUES, TODO's and Remarks
+ - run-local.bat did not work for me, if it does for you, let me know
+ - Initially there were only stand-alone classes without inheritance, I have started a hierarchy which looks more natural to me
+ - This version needs Pets, more(any?) Shops, and more original Monsters
+ - Although some of the programmatic choices seem so odd, even to me as a non-software developer, I think it is awesome that Claude produced such a wonderful working version
