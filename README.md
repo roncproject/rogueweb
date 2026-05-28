@@ -33,7 +33,7 @@ How to run on AWS:
  - run-local.bat did not work for me, if it does for you, let me know
  - Initially there were only stand-alone classes without inheritance, I have started a hierarchy which looks more natural to me
  - This version needs Pets, more(any?) Shops, and more original Monsters
+ - More tests, both Unit and Automatic
+ - This README should be extendeed, or even a proper PRD document added
  - Although some of the programmatic choices seem so odd, even to me as a non-software developer, I think it is awesome that Claude produced such a wonderful working version
  - It was great working with the game of Rogue/Hack, working with LLM's, and running an app on AWS EB. I will return to this when I will find the time
-
-
