@@ -31,6 +31,7 @@ How to run on AWS:
  
  ISSUES, TODO's and Remarks
  - run-local.bat did not work for me, if it does for you, let me know
+ - Opening the app on a PC browser looks fine, but on a mobile phone initially only shows a black screen with instructions. 
  - Initially there were only stand-alone classes without inheritance, I have started a hierarchy which looks more natural to me
  - This version needs Pets, more(any?) Shops, and more original Monsters
  - More tests, both Unit and Automatic
