@@ -36,4 +36,4 @@ How to run on AWS:
  - Although some of the programmatic choices seem so odd, even to me as a non-software developer, I think it is awesome that Claude produced such a wonderful working version
  - It was great working with the game of Rogue/Hack, working with LLM's, and running an app on AWS EB. I will return to this when I will find the time
 
- - 
+
