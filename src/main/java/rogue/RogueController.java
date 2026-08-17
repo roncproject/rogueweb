@@ -1,5 +1,6 @@
 package rogue;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,9 @@ public class RogueController {
 
         System.out.println("Creating new RogueController for session ");
 
+        //getIp(); // Log the IP address when a new session starts
+
+
         this.session = session;
     }
 
@@ -44,6 +48,10 @@ public class RogueController {
      */
     @PostMapping("/api/new")
     public Map<String, Object> newGame() {
+
+        
+        //getIp(); // Log the IP address when a new session starts
+
         session.newGame();
         return buildStateJson(session.getState());
     }
@@ -58,6 +66,8 @@ public class RogueController {
      */
     @GetMapping("/api/state")
     public Map<String, Object> getState() {
+
+        //getIp(); // Log the IP address when a new session starts
         if (!session.hasGame()) session.newGame();
         return buildStateJson(session.getState());
     }
@@ -75,6 +85,7 @@ public class RogueController {
      */
     @PostMapping("/api/key")
     public Map<String, Object> handleKey(@RequestBody String key) {
+        //getIp(); // Log the IP address when a new session starts
         if (!session.hasGame()) session.newGame();
         GameState gs     = session.getState();
         GameEngine engine = session.getEngine();
@@ -398,5 +409,20 @@ public class RogueController {
         Room pr = gs.roomAt(px, py);
         Room mr = gs.roomAt(m.pos.x, m.pos.y);
         return pr != null && pr == mr && !pr.dark();
+    }
+
+
+
+    @Autowired
+    private IpService ipService;
+    
+    @GetMapping("/my-ip")
+    public String getIp() {
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        System.out.println(
+            "Received request for /my-ip, fetching client IP...: " 
+            + ipService.getCurrentUserIp());
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        return "Your IP: " + ipService.getCurrentUserIp();
     }
 }
