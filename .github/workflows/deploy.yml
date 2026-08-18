@@ -29,17 +29,18 @@ jobs:
         # Step 4: Package JAR and Procfile together
         - name: Generate Deployment Package
           run: |
-            zip -j deploy.zip target/*.jar Procfile
+            zip -j rogue-deploy.zip target/*.jar Procfile
 
         # Step 5: Configure AWS Credentials
-        - name: Configure AWS Credentials
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws-region: eu-west-3 # Change to your AWS region
+        # REMOVED because we are using secrets directly in the deployment step. If you prefer to configure AWS credentials separately, uncomment the following lines and remove the credentials from the deployment step.
+        #- name: Configure AWS Credentials
+        #  uses: aws-actions/configure-aws-credentials@v4
+        #  with:
+        #    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #    aws-region: eu-west-3 # Change to your AWS region
 
-        # Step 6: Deploy to Elastic Beanstalk
+        # Step 5(was 6): Deploy to Elastic Beanstalk
         - name: Deploy to AWS Elastic Beanstalk
           uses: einaregilsson/beanstalk-deploy@v22
           with:
