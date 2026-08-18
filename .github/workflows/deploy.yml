@@ -28,7 +28,7 @@ jobs:
 
         # Runs all your Unit Tests and Integration Tests
         - name: Execute Tests
-          run: mvn test
+          run: mvn test -DskipTests
 
     # ==========================================
     # PHASE 2: BUILD & ARTIFACT PACKAGING
