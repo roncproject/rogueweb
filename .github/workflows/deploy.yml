@@ -28,7 +28,8 @@ jobs:
 
         # Runs all your Unit Tests and Integration Tests
         - name: Execute Tests
-          run: mvn test -DskipTests
+          #run: mvn test -DskipTests # ATTENTION: Skipping tests here for demonstration purposes. Remove '-DskipTests' to enable testing.
+          run: mvn test
 
     # ==========================================
     # PHASE 2: BUILD & ARTIFACT PACKAGING
@@ -70,7 +71,8 @@ jobs:
     deploy:
         name: Deploy to Elastic Beanstalk
         needs: build # ONLY runs if the 'build' job succeeds
-        if: github.event_name == 'push' # Prevents PRs from deploying automatically
+        # ATTENTION: The 'if' condition contains a FALSE flag to prevent deployment   
+        if: github.event_name == 'push' && false # Prevents PRs from deploying automatically
         runs-on: ubuntu-latest
         steps:
         - name: Download Build Artifact

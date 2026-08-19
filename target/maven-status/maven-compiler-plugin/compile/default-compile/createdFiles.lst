@@ -1,0 +1,17 @@
+rogue\GameData$MonsterInfo.class
+rogue\GameData.class
+rogue\RogueApplication.class
+rogue\Creature$Stats.class
+rogue\GameEngine.class
+rogue\Item.class
+rogue\GameState.class
+rogue\LevelGenerator.class
+rogue\Level.class
+rogue\GameSession.class
+rogue\Creature.class
+rogue\Coord.class
+rogue\Movable.class
+rogue\IpService.class
+rogue\Room.class
+rogue\Thing.class
+rogue\RogueController.class
