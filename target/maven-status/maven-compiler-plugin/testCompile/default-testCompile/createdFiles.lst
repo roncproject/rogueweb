@@ -1,0 +1,7 @@
+rogue\GameDataTest.class
+rogue\RogueControllerTest.class
+rogue\GameEngineTest.class
+rogue\ItemTest.class
+rogue\LevelTest.class
+rogue\CoordTest.class
+rogue\GameStateTest.class
