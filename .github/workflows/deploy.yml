@@ -56,10 +56,10 @@ jobs:
         - name: Generate Deployment Package
           run: |
             # Kopieer de JAR naar de root zodat AWS hem direct ziet
-            cp target/rogue.aws.jar .
+            cp target/rogue-aws.jar .
             # Pak alleen de benodigde runtime bestanden in (geen Java broncode)
-            # zip rogue-deploy.zip rogue.aws.jar Procfile
-            zip -r rogue-deploy.zip rogue.aws.jar Procfile .ebextensions/
+            # zip rogue-deploy.zip rogue-aws.jar Procfile
+            zip -r rogue-deploy.zip rogue-aws.jar Procfile .ebextensions/
             # zip -j rogue-deploy.zip target/*.jar Procfile
 
         # Upload the zip file so the next job can download and use it
