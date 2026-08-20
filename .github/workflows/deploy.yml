@@ -72,7 +72,8 @@ jobs:
         name: Deploy to Elastic Beanstalk
         needs: build # ONLY runs if the 'build' job succeeds
         # ATTENTION: The 'if' condition contains a FALSE flag to prevent deployment   
-        if: github.event_name == 'push' && false # Prevents PRs from deploying automatically
+        # if: github.event_name == 'push' && false # Prevents PRs from deploying automatically
+        if: github.event_name == 'push'  
         runs-on: ubuntu-latest
         steps:
         - name: Download Build Artifact
