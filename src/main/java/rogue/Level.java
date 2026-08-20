@@ -13,8 +13,6 @@ public class Level {
     private Random rng = GameData.RNG;
 
     Level(GameState gs) {
-        System.out.println("Level  initialized with GameState: " + gs);
-
         this.gs = gs;
     }
 
@@ -125,8 +123,6 @@ public class Level {
 
         // Reveal the room the player starts in
         revealRoom(gs.player.pos);
-
-        System.out.println("Level generation complete.");
     }
 
 

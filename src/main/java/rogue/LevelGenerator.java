@@ -26,8 +26,6 @@ public class LevelGenerator {
      * @param gs the game state to populate when generating a level
      */
     public LevelGenerator(GameState gs) {
-        System.out.println("LevelGenerator initialized with GameState: " + gs);
-
         this.gs = gs;
         this.level = new Level(gs);
         level.generate();

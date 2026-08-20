@@ -28,13 +28,6 @@ public class RogueController {
     private final GameSession session;
 
     public RogueController(GameSession session) {
-
-
-        System.out.println("Creating new RogueController for session ");
-
-        //getIp(); // Log the IP address when a new session starts
-
-
         this.session = session;
     }
 
@@ -418,11 +411,6 @@ public class RogueController {
     
     @GetMapping("/my-ip")
     public String getIp() {
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println(
-            "Received request for /my-ip, fetching client IP...: " 
-            + ipService.getCurrentUserIp());
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         return "Your IP: " + ipService.getCurrentUserIp();
     }
 }

@@ -249,9 +249,6 @@ public class GameState {
      */
     private void initPlayer() {
         player = new Creature(true, '@', new Coord(0, 0));
-  
-        System.out.println("Initialized player with starting equipment and stats.");
-        
     }
 
     /**

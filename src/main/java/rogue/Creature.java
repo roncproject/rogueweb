@@ -26,9 +26,6 @@ class Creature extends Thing implements Movable{
      * @param p the initial map position
      */
     Creature(char t, Coord p) {
-        
-        System.out.println("Creating creature of type '" + t + "' at " + p);
-
         type = t;
         disguise = t;
         pos = p;
@@ -76,8 +73,6 @@ class Creature extends Thing implements Movable{
         this.armor        = startArmor;
         this.stats.arm    = GameData.ARMOR_CLASS[GameData.RING_MAIL];
         this.foodLeft     = 2000;
-
-        System.out.println("Initialized player with starting equipment and stats.");
     }
 
 
@@ -86,16 +81,11 @@ class Creature extends Thing implements Movable{
 
     public void move (Coord newPos) {
         // Implementation of movement logic goes here
-
-        System.out.println("Moving creature of type '" + type + "' from " + pos + " to " + newPos); 
-
         pos = newPos;
     } 
 
     public void move(int dx, int dy) {
         // Implementation of movement logic goes here
-        System.out.println("Moving creature of type '" + type + "' from " + pos + " by delta (" + dx + "," + dy + ") to " + pos.add(dx, dy));
-        
         move(pos.add(dx, dy));  
     }   
 
